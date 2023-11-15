@@ -1,0 +1,53 @@
+# Get all users
+GET http://localhost:3000/tests
+
+
+# Get a single user by ID (replace ':id' with an actual user ID)
+
+GET http://localhost:3000/tests/:id
+
+
+# Get professional data
+
+//GET http://localhost:8080/professional
+
+//Create User
+POST http://localhost:3000/tests HTTP/1.1
+Content-Type: application/json
+
+{
+    "firstName": "David",
+    "lastName": "Doe",
+    "email": "doejohn@yahoo.com",
+    "favoriteColor": "green",
+    "birthday": "1990-01-01"
+}
+
+
+//Update User
+
+
+PUT http://localhost:3000/tests/:id  HTTP/1.1
+Content-Type: application/json
+
+{
+    "firstName": "Abraham",
+    "lastName": "Lincoln",
+    "email": "doejohn@yahoo.com",
+    "favoriteColor": "blue",
+    "birthday": "1990-01-01"
+}
+
+//Delete user
+
+DELETE http://localhost:3000/tests/:id  HTTP/1.1
+Content-Type: application/json
+
+{
+    "firstName": "Simeon ",
+    "lastName": "Peter",
+    "email": "doejohn@yahoo.com",
+    "favoriteColor": "blue",
+    "birthday": "1990-01-01"
+}
+
