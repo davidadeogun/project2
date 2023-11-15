@@ -3,8 +3,7 @@ router.use('/', require('./swagger'));
 
 
 router.get('/', (req, res) => {
-    //#swagger.tags= [' Hello Users']
-    res.send('Welcome to the Users API!');
+    res.send('Welcome to the Users API!If you know the specific endpoints, you can use them to get data.');
 });
 
 router.use('/tests', require('./tests'));
