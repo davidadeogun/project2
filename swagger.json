@@ -5,10 +5,10 @@
     "description": "API for NodeJS",
     "version": "1.0.0"
   },
-  "host": "localhost:3000",
+  "host": "project2-q20j.onrender.com/",
   "basePath": "/",
   "schemes": [
-    "http"
+    "https"
   ],
   "paths": {
     "/": {
