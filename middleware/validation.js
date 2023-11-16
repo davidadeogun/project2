@@ -27,6 +27,36 @@ const SaveContact = (req, res, next) => {
     }
 };
 
+Validator.register('dateFormat', (value, requirement, attribute) => {
+    return !value || value.match(/^\d{4}-\d{2}-\d{2}$/);
+}, 'The :attribute does not match the format YYYY-MM-DD.');
+
+Validator.register('numeric', (value, requirement, attribute) => {
+    return value != null && /^[0-9]+$/.test(value);
+}, 'The :attribute must be a numeric value.');
+
+const SaveBlog = (req, res, next) => {
+    const validationRule = {
+        title: 'required|string',
+        content: 'required|string',
+        author: 'required|string',
+        publicationDate: 'dateFormat',
+        tags: 'required|string',
+        views: 'required|numeric', // Removed spaces around 'numeric'
+        comments: 'string'
+    };
+    const validation = new Validator(req.body, validationRule);
+
+    if (validation.fails()) {
+        res.status(412).send({
+            success: false,
+            message: 'Validation failed',
+            data: validation.errors
+        });
+    } else {
+        next();
+    }
+};
 
 
 // Custom rule for MongoDB ObjectId
@@ -51,7 +81,7 @@ const ValidateIdParam = (req, res, next) => {
     }
 };
 module.exports = {
-    SaveContact, ValidateIdParam
+    SaveContact, ValidateIdParam, SaveBlog
 };
 
 

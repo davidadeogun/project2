@@ -1,0 +1,99 @@
+const mongodb = require('../data/database');
+const ObjectId = require('mongodb').ObjectId;
+
+const getAllBlogs = async (req, res) => {
+    const result = await mongodb.getDb().collection('blogPosts').find();
+    const blogPosts = await result.toArray();
+
+    if (blogPosts.length === 0) {
+        return res.status(404).json({ message: 'No such data was found' });
+    }
+
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).json(blogPosts);
+};
+
+const getSingleBlog = async (req, res) => {
+    if (!ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ message: 'Invalid ID number or format' });
+    }
+
+    const blogId = new ObjectId(req.params.id);
+    const result = await mongodb.getDb().collection('blogPosts').find({ _id: blogId });
+    const blogPosts = await result.toArray();
+
+    if (blogPosts.length === 0) {
+        return res.status(404).json({ message: 'No such data was found' });
+    }
+
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).json(blogPosts[0]);
+};
+
+
+
+const createBlog = async (req, res) => {
+    const newBlog = {
+        title: req.body.title,
+        content: req.body.content,
+        author: req.body.author,
+        publicationDate: req.body.publicationDate,
+        tags: req.body.tags,
+        views: req.body.views,
+        comments: req.body.comments
+    };
+    const response = await mongodb.getDb().collection('blogPosts').insertOne(newBlog);
+
+    if (response.acknowledged) {
+        const createdBlog = {
+            _id: response.insertedId,
+            ...newBlog
+        };
+        res.status(201).json(createdBlog); // Return the created user with 201 status
+    } else {
+        res.status(400).json({ message: 'Error creating contact' });
+    }
+};
+
+const updateBlog = async (req, res) => {
+    if (!ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ message: 'Invalid ID number or format' });
+    } 
+
+    const blogId = new ObjectId(req.params.id);
+    const newBlog = {
+        title: req.body.title,
+        content: req.body.content,
+        author: req.body.author,
+        publicationDate: req.body.publicationDate,
+        tags: req.body.tags,
+        views: req.body.views,
+        comments: req.body.comments
+    };
+
+    const response = await mongodb.getDb().collection('blogPosts').replaceOne({ _id: blogId }, newBlog);
+    if (response.modifiedCount === 0) {
+        return res.status(404).json({ message: 'Contact not found or no changes made' });
+    }
+
+    res.status(200).send();
+};  
+
+
+const deleteBlog = async (req, res) => {
+    if (!ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ message: 'Invalid ID number or format' });
+    }
+
+    const blogId = new ObjectId(req.params.id);
+    const response = await mongodb.getDb().collection('blogPosts').deleteOne({ _id: blogId });
+
+    if (response.deletedCount === 0) {
+        return res.status(404).json({ message: 'No such data was found' });
+    }
+
+    res.status(200).send();
+};
+
+
+module.exports = { getAllBlogs, getSingleBlog, createBlog, updateBlog, deleteBlog };
