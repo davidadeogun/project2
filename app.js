@@ -24,7 +24,24 @@ process.on ('uncaughtException', (err, origin) => {
 
 app.use(express.json());
 
+/*
+const passport = require('passport');
+const OAuthStrategy = require('passport-oauth').OAuthStrategy;
 
+passport.use('provider', new OAuthStrategy({
+    requestTokenURL: 'https://www.provider.com/oauth/request_token',
+    accessTokenURL: 'https://www.provider.com/oauth/access_token',
+    userAuthorizationURL: 'https://www.provider.com/oauth/authorize',
+    consumerKey: 'YOUR_CONSUMER_KEY',
+    consumerSecret: 'YOUR_CONSUMER_SECRET',
+    callbackURL: 'https://www.example.com/auth/provider/callback'
+},
+function(token, tokenSecret, profile, done) {
+    User.findOrCreate({ providerId: profile.id }, function (err, user) {
+        return done(err, user);
+    });
+}));
+*/
 
 
 mongodb.initDb((err) => {
