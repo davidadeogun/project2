@@ -26,15 +26,6 @@ app.use(express.json());
 
 
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-    console.error(err);
-    const status = err.status || 500;
-    const message = err.message || 'Internal Server Error';
-    res.status(status).json({ message });
-});
-
-
 
 mongodb.initDb((err) => {
     if(err) {

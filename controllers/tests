@@ -1,139 +1,88 @@
-
-//STARTS HERE
 const mongodb = require('../data/database');
 const ObjectId = require('mongodb').ObjectId;
 
-
 const getAll = async (req, res) => {
-    try {
-        const result = await mongodb.getDb().collection('tests').find();
+    const result = await mongodb.getDb().collection('tests').find();
+    const tests = await result.toArray();
 
-        // Convert the result to an array and handle it inside the try block
-        const tests = await result.toArray();
-
-        // Check if any records were found
-        if (tests.length === 0) {
-            return res.status(404).json({ message: 'No such data was found' });
-        }
-
-        res.setHeader('Content-Type', 'application/json');
-        res.status(200).json(tests);
-    } catch (err) {
-        next(err);
+    if (tests.length === 0) {
+        return res.status(404).json({ message: 'No such data was found' });
     }
+
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).json(tests);
 };
 
 const getSingle = async (req, res) => {
-    try {
-        // Ensure that the provided ID is a valid ObjectId
-        if (!ObjectId.isValid(req.params.id)) {
-            return res.status(400).json({ message: 'Invalid ID number or format' });
-        }
-
-        const userId = new ObjectId(req.params.id);
-        const result = await mongodb.getDb().collection('tests').find({ _id: userId });
-
-        // Convert the result to an array and handle it inside the try block
-        const tests = await result.toArray();
-
-        // Check if a record was found
-        if (tests.length === 0) {
-            return res.status(404).json({ message: 'No such data was found' });
-        }
-
-        res.setHeader('Content-Type', 'application/json');
-        res.status(200).json(tests[0]);
-    } catch (err) {
-       next(err);
+    if (!ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ message: 'Invalid ID number or format' });
     }
+
+    const userId = new ObjectId(req.params.id);
+    const result = await mongodb.getDb().collection('tests').find({ _id: userId });
+    const tests = await result.toArray();
+
+    if (tests.length === 0) {
+        return res.status(404).json({ message: 'No such data was found' });
+    }
+
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).json(tests[0]);
+};
+
+const createUser = async (req, res) => {
+    const newUser = {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        favoriteColor: req.body.favoriteColor,
+        birthday: req.body.birthday
+    };
+    const response = await mongodb.getDb().collection('tests').insertOne(newUser);
+
+    if (!response.acknowledged) {
+        return res.status(400).json({ message: 'Error creating contact' });
+    }
+
+    res.status(200).send();
+};
+
+const updateUser = async (req, res) => {
+    if (!ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ message: 'Invalid ID number or format' });
+    }
+
+    const userId = new ObjectId(req.params.id);
+    const newUser = {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        favoriteColor: req.body.favoriteColor,
+        birthday: req.body.birthday
+    };
+
+    const response = await mongodb.getDb().collection('tests').replaceOne({ _id: userId }, newUser);
+    if (response.modifiedCount === 0) {
+        return res.status(404).json({ message: 'Contact not found or no changes made' });
+    }
+
+    res.status(200).send();
+};
+
+const deleteUser = async (req, res) => {
+    if (!ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ message: 'Invalid ID number or format' });
+    }
+
+    const userId = new ObjectId(req.params.id);
+    const response = await mongodb.getDb().collection('tests').deleteOne({ _id: userId });
+
+    if (response.deletedCount === 0) {
+        return res.status(404).json({ message: 'No such data was found' });
+    }
+
+    res.status(204).send();
 };
 
 
-
-
-
-//Create User
-const createUser = async (req, res, next) => {
-    try {
-        //#swagger.tags= [' Hello Users']
-        const newUser = {
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
-            email: req.body.email,
-            favoriteColor: req.body.favoriteColor,
-            birthday: req.body.birthday
-        };
-        const response = await mongodb.getDb().collection('tests').insertOne(newUser);
-
-        if (!response.acknowledged) {
-            throw { status: 500, message: 'Error creating contact' };
-        }
-
-        res.status(200).send();
-    } catch (err) {
-        next(err);
-    }
-};
-
-
-
-//update user
-const updateUser = async (req, res, next) => {
-    try {
-        const userId = new ObjectId(req.params.id);
-
-        // Check if the provided ID is valid
-        if (!ObjectId.isValid(req.params.id)) {
-            throw { status: 400, message: 'Invalid ID format' };
-        }
-
-        const newUser = {
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
-            email: req.body.email,
-            favoriteColor: req.body.favoriteColor,
-            birthday: req.body.birthday
-        };
-
-        const response = await mongodb.getDb().collection('tests').replaceOne({ _id: userId }, newUser);
-
-        if (response.modifiedCount === 0) {
-            throw { status: 404, message: 'Contact not found or no changes made' };
-        }
-
-        res.status(200).send();
-    } catch (err) {
-        next(err); // Pass any errors to the centralized error handler
-    }
-};
-
-
-//delete user
-
-const deleteUser = async (req, res, next) => {
-    try {
-        // Check if the provided ID is valid
-        if (!ObjectId.isValid(req.params.id)) {
-            throw { status: 400, message: 'Invalid ID format' };
-        }
-
-        const userId = new ObjectId(req.params.id);
-        const response = await mongodb.getDb().collection('tests').deleteOne({ _id: userId });
-
-        if (response.deletedCount === 0) {
-            throw { status: 404, message: 'Contact not found' };
-        }
-
-        res.status(204).send();
-    } catch (error) {
-        next(error); // Forward the error to the centralized error handler
-    }
-};
-
-
-
-
-
-
-module.exports = {getAll, getSingle, createUser, updateUser, deleteUser};
-
+module.exports = { getAll, getSingle, createUser, updateUser, deleteUser };
