@@ -30,6 +30,8 @@ const getSingle = async (req, res) => {
     res.status(200).json(tests[0]);
 };
 
+
+
 const createUser = async (req, res) => {
     const newUser = {
         firstName: req.body.firstName,
@@ -40,17 +42,21 @@ const createUser = async (req, res) => {
     };
     const response = await mongodb.getDb().collection('tests').insertOne(newUser);
 
-    if (!response.acknowledged) {
-        return res.status(400).json({ message: 'Error creating contact' });
+    if (response.acknowledged) {
+        const createdUser = {
+            _id: response.insertedId,
+            ...newUser
+        };
+        res.status(201).json(createdUser); // Return the created user with 201 status
+    } else {
+        res.status(400).json({ message: 'Error creating contact' });
     }
-
-    res.status(200).send();
 };
 
 const updateUser = async (req, res) => {
     if (!ObjectId.isValid(req.params.id)) {
         return res.status(400).json({ message: 'Invalid ID number or format' });
-    }
+    } 
 
     const userId = new ObjectId(req.params.id);
     const newUser = {
@@ -67,7 +73,12 @@ const updateUser = async (req, res) => {
     }
 
     res.status(200).send();
-};
+};  
+
+
+
+
+
 
 const deleteUser = async (req, res) => {
     if (!ObjectId.isValid(req.params.id)) {
@@ -81,7 +92,7 @@ const deleteUser = async (req, res) => {
         return res.status(404).json({ message: 'No such data was found' });
     }
 
-    res.status(204).send();
+    res.status(200).send();
 };
 
 
