@@ -7,10 +7,6 @@ router.use("/", require("./swagger"));
 router.use("/tests", require("./tests"));
 router.use("/blog", require("./blog"));
 
-/*router.get('/', (req, res) => {
-  res.send('<a href="/login">Authenticate with Google</a>');
-});*/
-
 router.get('/', (req, res) => {
   res.render('index');
 });
