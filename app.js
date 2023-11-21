@@ -1,47 +1,75 @@
 const express = require('express');
 const bodyParser = require('body-parser'); //Week 2
 const mongodb = require('./data/database');
-//const {professionalData} = require('./controllers/contacts');
+const passport = require('passport');
+const session = require('express-session');
+const GoogleStrategy = require('passport-google-oauth2').Strategy;
 const app = express();
 const cors = require('cors')
 
+
+app.use(express.static('public'));
+
 const port = process.env.PORT || 3000; // default port for local dev
+app.set('view engine', 'ejs');
+app
+    .use(bodyParser.json())
+    .use(session({
+        secret: process.env.SESSION_SECRET,
+        resave: false,
+        saveUninitialized: true
+    }))
+// Session and Passport configuration
+    .use(passport.initialize())
 
+    .use(passport.session())
 
-app.use(cors());
-app.use(bodyParser.json()); //Week 2 
-app.use((req, res, next) => {       //week2 newly added
-   res.setHeader('Access-Control-Allow-Origin', '*');
-    next();
+    .use((req, res, next) => {
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader(
+            'Access-Control-Allow-Headers',
+            'Origin, X-Requested-With, Content-Type, Accept, Z-Key, Authorization'
+        );
+        res.setHeader
+        ('Access-Control-Allow-Methods',
+            'POST, GET, PUT, PATCH, DELETE, OPTIONS'
+        );
+        next();
+    })
+    .use(cors({ methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT']}))
+    .use(cors({ origin: '*'}))
+    .use('/', require('./routes/index.js'));
+
+passport.use(new GoogleStrategy({
+        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        callbackURL: process.env.CALLBACK_URL,
+        passReqToCallback: true
+    },
+    function (request, accessToken, refreshToken, profile, done) {
+        console.log(profile);
+        return done(null, profile);
+    }
+));
+
+passport.serializeUser(function (user, done) {
+    done(null, user);
 });
 
-app.use('/', require('./routes'));
-
-//W3
-process.on ('uncaughtException', (err, origin) => {
-    console.log('Caught exception: ${err} \n' + 'Exception origin: ${origin}');
+passport.deserializeUser(function (user, done) {
+    //console.log(user);
+    done(null, user);
 });
 
+app.get('/', (req, res) => {res.send(req.session.user !== undefined ? `Logged in as ${req.session.user.displayName}` : "Logged out")});
+app.get('/auth/google/callback', 
+    passport.authenticate('google', { failureRedirect: '/api-docs', session: false }),
+    (req, res) => {
+        req.session.user = req.user;
+        res.redirect('/api-docs');
+    }
+);
 app.use(express.json());
-
-/*
-const passport = require('passport');
-const OAuthStrategy = require('passport-oauth').OAuthStrategy;
-
-passport.use('provider', new OAuthStrategy({
-    requestTokenURL: 'https://www.provider.com/oauth/request_token',
-    accessTokenURL: 'https://www.provider.com/oauth/access_token',
-    userAuthorizationURL: 'https://www.provider.com/oauth/authorize',
-    consumerKey: 'YOUR_CONSUMER_KEY',
-    consumerSecret: 'YOUR_CONSUMER_SECRET',
-    callbackURL: 'https://www.example.com/auth/provider/callback'
-},
-function(token, tokenSecret, profile, done) {
-    User.findOrCreate({ providerId: profile.id }, function (err, user) {
-        return done(err, user);
-    });
-}));
-*/
 
 
 mongodb.initDb((err) => {
