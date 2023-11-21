@@ -23,7 +23,7 @@
     },
     "/tests/": {
       "get": {
-        "description": "",
+        "description": "Get all test data",
         "responses": {
           "default": {
             "description": ""
@@ -32,7 +32,7 @@
       },
       "post": {
         "tags": [
-          ""
+          "Create a new test data"
         ],
         "description": "",
         "parameters": [
@@ -73,7 +73,7 @@
     },
     "/tests/{id}": {
       "get": {
-        "description": "",
+        "description": "Get a test data with the given id",
         "parameters": [
           {
             "name": "id",
@@ -89,7 +89,7 @@
         }
       },
       "put": {
-        "description": "",
+        "description": "Update an exisitng test data with the given ID",
         "parameters": [
           {
             "name": "id",
@@ -132,7 +132,7 @@
         }
       },
       "delete": {
-        "description": "",
+        "description": "Delete a test data with the given id",
         "parameters": [
           {
             "name": "id",
@@ -150,7 +150,7 @@
     },
     "/blog/": {
       "get": {
-        "description": "",
+        "description": "Get all blog data",
         "responses": {
           "default": {
             "description": ""
@@ -159,7 +159,7 @@
       },
       "post": {
         "tags": [
-          ""
+          "Create a new blog data"
         ],
         "description": "",
         "parameters": [
@@ -203,7 +203,7 @@
     },
     "/blog/{id}": {
       "get": {
-        "description": "",
+        "description": "Get a blog data with the given id",
         "parameters": [
           {
             "name": "id",
@@ -219,7 +219,7 @@
         }
       },
       "put": {
-        "description": "",
+        "description": "Update an existing blog data with the given ID",
         "parameters": [
           {
             "name": "id",
@@ -265,7 +265,7 @@
         }
       },
       "delete": {
-        "description": "",
+        "description": "Delete a blog data with the given id",
         "parameters": [
           {
             "name": "id",
