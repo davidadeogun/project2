@@ -1,20 +1,14 @@
-# Get all users
+# Get all users for tests
 GET http://localhost:3000/tests
 
 
 # Get a single user by ID (replace ':id' with an actual user ID)
-
 GET http://localhost:3000/tests/:id
 
-
-# Get professional data
-
-//GET http://localhost:8080/professional
 
 //Create User
 POST http://localhost:3000/tests HTTP/1.1
 Content-Type: application/json
-
 {
     "firstName": "David",
     "lastName": "Doe",
@@ -25,8 +19,6 @@ Content-Type: application/json
 
 
 //Update User
-
-
 PUT http://localhost:3000/tests/:id  HTTP/1.1
 Content-Type: application/json
 
@@ -39,7 +31,6 @@ Content-Type: application/json
 }
 
 //Delete user
-
 DELETE http://localhost:3000/tests/:id  HTTP/1.1
 Content-Type: application/json
 
@@ -51,3 +42,44 @@ Content-Type: application/json
     "birthday": "1990-01-01"
 }
 
+
+
+
+# Get all users for blogPosts
+GET http://localhost:3000/blog
+
+
+# Get a single user by ID (replace ':id' with an actual user ID)
+GET http://localhost:3000/blog/:id
+
+
+//Create User
+POST http://localhost:3000/blog HTTP/1.1
+Content-Type: application/json
+{
+"title":"Exploring Technology",
+"content":"Innovations in AI",
+"author":"Alexa",
+"publicationDate":"2021-07-08",
+"tags":"technology, AI",
+"views":"250",
+"comments":"insightful and informative"
+}
+
+
+//Update User
+PUT http://localhost:3000/blog/:id  HTTP/1.1
+Content-Type: application/json
+{
+"title":"Exploring Technology",
+"content":"Innovations in AI",
+"author":"Alexa",
+"publicationDate":"2021-07-08",
+"tags":"technology, AI",
+"views":"250",
+"comments":"insightful and informative"
+}
+
+//Delete user
+DELETE http://localhost:3000/blog/:id  HTTP/1.1
+Content-Type: application/json
